@@ -84,7 +84,7 @@ public class PrecisionTranslation extends BaseTranslate {
         ++transUnitId;
 
         if (settings.getBoolean("filter", true)) {
-            text = text.replaceAll("<\\/?f\\d+>", "");
+            text = text.replaceAll("<\\/?[a-z]\\d+>", "");
         }
 
         text = StringEscapeUtils.escapeXml10(text);
