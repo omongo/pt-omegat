@@ -28,15 +28,17 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="urlTextField" max="32767" attributes="0"/>
+                  <Component id="engineTextField" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="urlLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="engineLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="filterCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="266" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="235" max="32767" attributes="0"/>
                       <Component id="okButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
@@ -54,8 +56,12 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="urlTextField" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="engineLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="engineTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="filterCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="10" max="32767" attributes="0"/>
+              <EmptySpace pref="28" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -72,6 +78,13 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="urlTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="engineLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Engine (graphname)"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="engineTextField">
     </Component>
     <Component class="javax.swing.JCheckBox" name="filterCheckBox">
       <Properties>

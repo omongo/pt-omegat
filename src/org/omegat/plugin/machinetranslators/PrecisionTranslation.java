@@ -55,6 +55,7 @@ public class PrecisionTranslation extends BaseTranslate {
         File config = new File(System.getProperty("user.home"), ".precision-translation");
         if (!config.exists()) {
             settings.put("url", "http://74.208.75.116:62012/RPC2");
+            settings.put("engine", "translate-xliff");
             settings.putBoolean("filter", true);
             try {
                 config.createNewFile();
@@ -92,7 +93,7 @@ public class PrecisionTranslation extends BaseTranslate {
             "  <file source-language=\"" + sLang + "\" target-language=\"" + tLang + "\">\n" +
             "    <header>\n" +
             "      <note from=\"PTTOOLS\">\n" +
-            "        <graphname>translate-xliff</graphname>\n" +
+            "        <graphname>" + settings.get("engine", null) + "</graphname>\n" +
             "      </note>\n" +
             "    </header>\n" +
             "    <body>\n" +
