@@ -28,6 +28,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JMenuItem;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -86,6 +87,8 @@ public class PrecisionTranslation extends BaseTranslate {
             text = text.replaceAll("<\\/?f\\d+>", "");
         }
 
+        text = StringEscapeUtils.escapeXml10(text);
+
         String transUnit = text;
         String xliff =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
@@ -133,7 +136,7 @@ public class PrecisionTranslation extends BaseTranslate {
             Logger.getLogger(SettingsDialog.class.getName()).log(Level.WARNING, null, ex);
         }
 
-        return transUnit;
+        return StringEscapeUtils.unescapeXml(transUnit);
 
     }
 
