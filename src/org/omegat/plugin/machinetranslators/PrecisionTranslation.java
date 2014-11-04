@@ -130,9 +130,11 @@ public class PrecisionTranslation extends BaseTranslate {
                 status = (String) statusResults.get(jobId).get("status");
             } while (!status.equals("completed") && !status.equals("failed"));
 
-            if (status.equals("completed")) {
+            Object[] contents = (Object[]) statusResults.get(jobId).get("content");
+            if (status.equals("completed") && contents.length != 0) {
+                String content = (String) contents[0];
                 Pattern p = Pattern.compile("state=\"new\">(.*)</target>", Pattern.MULTILINE);
-                Matcher m = p.matcher((String) ((Object[]) (statusResults.get(jobId).get("content")))[0]);
+                Matcher m = p.matcher(content);
                 if (m.find()) {
                     transUnit = m.group(1);
                 }
