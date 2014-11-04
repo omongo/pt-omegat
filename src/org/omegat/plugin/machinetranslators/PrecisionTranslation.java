@@ -58,6 +58,7 @@ public class PrecisionTranslation extends BaseTranslate {
             settings.put("url", "http://74.208.75.116:62012/RPC2");
             settings.put("engine", "translate-xliff");
             settings.putBoolean("filter", true);
+            settings.putBoolean("delete", true);
             try {
                 config.createNewFile();
             } catch (IOException ex) {
@@ -121,7 +122,7 @@ public class PrecisionTranslation extends BaseTranslate {
                 return "ERROR!\n" + "Missing graph or invalid configurations";
             }
 
-            params = new Object[] {new Object[] {jobId}, false, true, false};
+            params = new Object[] {new Object[] {jobId}, false, true, settings.getBoolean("delete", true)};
             Map<String, Map> statusResults;
             String status;
             do {

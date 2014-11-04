@@ -31,6 +31,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         urlTextField.setText(PrecisionTranslation.settings.get("url", null));
         engineTextField.setText(PrecisionTranslation.settings.get("engine", null));
         filterCheckBox.setSelected(PrecisionTranslation.settings.getBoolean("filter", true));
+        deleteCheckBox.setSelected(PrecisionTranslation.settings.getBoolean("delete", true));
     }
 
     @SuppressWarnings("unchecked")
@@ -42,17 +43,19 @@ public class SettingsDialog extends javax.swing.JDialog {
         engineLabel = new javax.swing.JLabel();
         engineTextField = new javax.swing.JTextField();
         filterCheckBox = new javax.swing.JCheckBox();
+        deleteCheckBox = new javax.swing.JCheckBox();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Precision Translation Settings");
 
         urlLabel.setText("URL");
 
         engineLabel.setText("Engine (graphname)");
 
         filterCheckBox.setText("Filter Tags");
+
+        deleteCheckBox.setText("Delete Job");
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -81,10 +84,13 @@ public class SettingsDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(urlLabel)
                             .addComponent(engineLabel)
-                            .addComponent(filterCheckBox))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(filterCheckBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(deleteCheckBox)))
+                        .addGap(0, 174, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 235, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -102,7 +108,9 @@ public class SettingsDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(engineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(filterCheckBox)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filterCheckBox)
+                    .addComponent(deleteCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -127,6 +135,7 @@ public class SettingsDialog extends javax.swing.JDialog {
             PrecisionTranslation.settings.put("url", url.toString());
             PrecisionTranslation.settings.put("engine", engine);
             PrecisionTranslation.settings.putBoolean("filter", filterCheckBox.isSelected());
+            PrecisionTranslation.settings.putBoolean("delete", deleteCheckBox.isSelected());
             this.dispose();
         } catch (MalformedURLException ex) {
             Logger.getLogger(SettingsDialog.class.getName()).log(Level.WARNING, null, ex);
@@ -135,6 +144,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
+    private javax.swing.JCheckBox deleteCheckBox;
     private javax.swing.JLabel engineLabel;
     private javax.swing.JTextField engineTextField;
     private javax.swing.JCheckBox filterCheckBox;
