@@ -118,7 +118,7 @@ public class PrecisionTranslation extends BaseTranslate {
             String jobId = (String) runResults[0];
 
             if (jobId.equals("")) {
-                return "Missing graph or invalid configurations";
+                return "ERROR!\n" + "Missing graph or invalid configurations";
             }
 
             params = new Object[] {new Object[] {jobId}, false, true, false};
@@ -138,7 +138,7 @@ public class PrecisionTranslation extends BaseTranslate {
             }
         } catch (XmlRpcException ex) {
             Logger.getLogger(SettingsDialog.class.getName()).log(Level.WARNING, null, ex);
-            transUnit = ex.getMessage();
+            transUnit = "ERROR!\n" + ex.getMessage();
         }
 
         return StringEscapeUtils.unescapeXml(transUnit);
