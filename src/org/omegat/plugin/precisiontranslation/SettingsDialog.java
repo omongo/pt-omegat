@@ -121,7 +121,9 @@ public class SettingsDialog extends javax.swing.JDialog {
         try {
             URL url = new URL(urlTextField.getText());
             String engine = engineTextField.getText();
-            if (engine.equals("")) return;
+            if (engine.equals("")) {
+                return;
+            }
             PrecisionTranslation.settings.put("url", url.toString());
             PrecisionTranslation.settings.put("engine", engine);
             PrecisionTranslation.settings.putBoolean("filter", filterCheckBox.isSelected());
