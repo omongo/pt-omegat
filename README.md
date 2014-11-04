@@ -1,14 +1,15 @@
-OmegaT Plugin for Precision Translation
+OmegaT plugin for Precision Translation
+=======================================
 
 # Building #
 
 Install required packages
 
-    sudo apt-get install ant openjdk-7-jdk
+    $ sudo apt-get install ant openjdk-7-jdk
 
 Change directory to the project, and run
 
-    ant
+    $ ant
 
 # Installing #
 
