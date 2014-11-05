@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,33 +40,12 @@ import org.omegat.util.Language;
 
 public class PrecisionTranslation extends BaseTranslate {
 
-    static private long transUnitId;
+    private static long transUnitId;
     public static final Preferences settings = Preferences.userNodeForPackage(PrecisionTranslation.class);
 
     public PrecisionTranslation() {
-
-        JMenuItem item = new JMenuItem("Precision Translation Settings");
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new SettingsDialog(null, true).setVisible(true);
-            }
-        });
-        Core.getMainWindow().getMainMenu().getOptionsMenu().add(item);
-
-        File config = new File(System.getProperty("user.home"), ".precision-translation");
-        if (!config.exists()) {
-            settings.put("url", "http://74.208.75.116:62012/RPC2");
-            settings.put("engine", "translate-xliff");
-            settings.putBoolean("filter", true);
-            settings.putBoolean("delete", true);
-            try {
-                config.createNewFile();
-            } catch (IOException ex) {
-                Logger.getLogger(PrecisionTranslation.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
+        initSettings();
+        addSetingsMenu();
     }
 
     @Override
@@ -81,71 +61,96 @@ public class PrecisionTranslation extends BaseTranslate {
     @Override
     @SuppressWarnings("unchecked")
     protected String translate(Language sLang, Language tLang, String text) throws Exception {
-
-        ++transUnitId;
-
-        if (settings.getBoolean("filter", true)) {
-            text = text.replaceAll("<\\/?[a-z]\\d+>", "");
+        String xliff = genXliff(sLang, tLang, text);
+        XmlRpcClient client = setUpClient();
+        try {
+            Object[] params = new Object[]{new Object[]{xliff}};
+            Object[] runResults = (Object[]) client.execute("run", params);
+            String jobId = (String) runResults[0];
+            if (!jobId.equals("")) {
+                params = new Object[]{new Object[]{jobId}, false, true, settings.getBoolean("delete", true)};
+                Map<String, Map> statusResults;
+                String status;
+                do {
+                    statusResults = (Map<String, Map>) client.execute("status", params);
+                    status = (String) statusResults.get(jobId).get("status");
+                } while (!status.equals("completed") && !status.equals("failed"));
+                Object[] contents = (Object[]) statusResults.get(jobId).get("content");
+                if (status.equals("completed") && contents.length != 0) {
+                    String transXliff = (String) contents[0];
+                    Pattern p = Pattern.compile("state=\"new\">(.*)</target>", Pattern.MULTILINE);
+                    Matcher m = p.matcher(transXliff);
+                    if (m.find()) {
+                        String transUnit = StringEscapeUtils.unescapeXml(m.group(1));
+                        return transUnit;
+                    }
+                }
+            } else {
+                return "ERROR!\n" + "Missing graph or invalid configurations";
+            }
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(SettingsDialog.class.getName()).log(Level.SEVERE, null, ex);
+            return "ERROR!\n" + ex.getMessage();
         }
+        return xliff;
+    }
 
-        text = StringEscapeUtils.escapeXml10(text);
-
-        String transUnit = text;
-        String xliff =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-            "<xliff version=\"1.2\">\n" +
-            "  <file source-language=\"" + sLang + "\" target-language=\"" + tLang + "\">\n" +
-            "    <header>\n" +
-            "      <note from=\"PTTOOLS\">\n" +
-            "        <graphname>" + settings.get("engine", null) + "</graphname>\n" +
-            "      </note>\n" +
-            "    </header>\n" +
-            "    <body>\n" +
-            "      <trans-unit id=\"" + Long.toString(transUnitId) + "\">\n" +
-            "        <source>" + text + "</source>\n" +
-            "      </trans-unit>\n" +
-            "    </body>\n" +
-            "  </file>\n" +
-            "</xliff>\n";
-
+    private XmlRpcClient setUpClient() throws MalformedURLException {
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
         config.setServerURL(new URL(settings.get("url", null)));
         XmlRpcClient client = new XmlRpcClient();
         client.setConfig(config);
+        return client;
+    }
 
-        try {
-            Object[] params = new Object[] {new Object[] {xliff}};
-            Object[] runResults = (Object[]) client.execute("run", params);
-            String jobId = (String) runResults[0];
-
-            if (jobId.equals("")) {
-                return "ERROR!\n" + "Missing graph or invalid configurations";
-            }
-
-            params = new Object[] {new Object[] {jobId}, false, true, settings.getBoolean("delete", true)};
-            Map<String, Map> statusResults;
-            String status;
-            do {
-                statusResults = (Map<String, Map>) client.execute("status", params);
-                status = (String) statusResults.get(jobId).get("status");
-            } while (!status.equals("completed") && !status.equals("failed"));
-
-            Object[] contents = (Object[]) statusResults.get(jobId).get("content");
-            if (status.equals("completed") && contents.length != 0) {
-                String content = (String) contents[0];
-                Pattern p = Pattern.compile("state=\"new\">(.*)</target>", Pattern.MULTILINE);
-                Matcher m = p.matcher(content);
-                if (m.find()) {
-                    transUnit = m.group(1);
-                }
-            }
-        } catch (XmlRpcException ex) {
-            Logger.getLogger(SettingsDialog.class.getName()).log(Level.WARNING, null, ex);
-            transUnit = "ERROR!\n" + ex.getMessage();
+    private String genXliff(Language sLang, Language tLang, String text) {
+        ++transUnitId;
+        if (settings.getBoolean("filter", true)) {
+            text = text.replaceAll("<\\/?[a-z]\\d+>", "");
         }
+        String xliff
+                = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                + "<xliff version=\"1.2\">\n"
+                + "  <file source-language=\"" + sLang + "\" target-language=\"" + tLang + "\">\n"
+                + "    <header>\n"
+                + "      <note from=\"PTTOOLS\">\n"
+                + "        <graphname>" + settings.get("engine", null) + "</graphname>\n"
+                + "      </note>\n"
+                + "    </header>\n"
+                + "    <body>\n"
+                + "      <trans-unit id=\"" + Long.toString(transUnitId) + "\">\n"
+                + "        <source>" + StringEscapeUtils.escapeXml10(text) + "</source>\n"
+                + "      </trans-unit>\n"
+                + "    </body>\n"
+                + "  </file>\n"
+                + "</xliff>\n";
+        return xliff;
+    }
 
-        return StringEscapeUtils.unescapeXml(transUnit);
+    private void addSetingsMenu() {
+        JMenuItem item = new JMenuItem("Precision Translation Settings");
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SettingsDialog(null, true).setVisible(true);
+            }
+        });
+        Core.getMainWindow().getMainMenu().getOptionsMenu().add(item);
+    }
 
+    private void initSettings() {
+        File config = new File(System.getProperty("user.home"), ".precision-translation");
+        if (!config.exists()) {
+            settings.put("url", "http://74.208.75.116:62012/RPC2");
+            settings.put("engine", "translate-xliff");
+            settings.putBoolean("filter", true);
+            settings.putBoolean("delete", true);
+            try {
+                config.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(PrecisionTranslation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
 }

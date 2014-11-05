@@ -48,6 +48,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Precision Translation Settings");
 
         urlLabel.setText("URL");
 
