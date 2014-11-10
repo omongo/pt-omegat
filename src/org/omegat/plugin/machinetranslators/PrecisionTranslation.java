@@ -105,7 +105,7 @@ public class PrecisionTranslation extends BaseTranslate {
 
     private String genXliff(Language sLang, Language tLang, String text) {
         ++transUnitId;
-        if (settings.getBoolean("filter", true)) {
+        if (settings.getBoolean("filter", false)) {
             text = text.replaceAll("<\\/?[a-z]\\d+>", "");
         }
         String xliff
@@ -143,7 +143,7 @@ public class PrecisionTranslation extends BaseTranslate {
         if (!config.exists()) {
             settings.put("url", "http://74.208.75.116:62012/RPC2");
             settings.put("engine", "translate-xliff");
-            settings.putBoolean("filter", true);
+            settings.putBoolean("filter", false);
             settings.putBoolean("delete", true);
             try {
                 config.createNewFile();

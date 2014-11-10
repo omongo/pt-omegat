@@ -30,7 +30,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         this.setLocationRelativeTo(parent);
         urlTextField.setText(PrecisionTranslation.settings.get("url", null));
         engineTextField.setText(PrecisionTranslation.settings.get("engine", null));
-        filterCheckBox.setSelected(PrecisionTranslation.settings.getBoolean("filter", true));
+        filterCheckBox.setSelected(PrecisionTranslation.settings.getBoolean("filter", false));
         deleteCheckBox.setSelected(PrecisionTranslation.settings.getBoolean("delete", true));
     }
 
@@ -55,6 +55,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         engineLabel.setText("Engine (graphname)");
 
         filterCheckBox.setText("Filter Tags");
+        filterCheckBox.setEnabled(false);
 
         deleteCheckBox.setText("Delete Job");
 

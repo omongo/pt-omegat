@@ -96,6 +96,7 @@
     <Component class="javax.swing.JCheckBox" name="filterCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Filter Tags"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="deleteCheckBox">
